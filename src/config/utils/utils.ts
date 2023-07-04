@@ -26,6 +26,7 @@ const entityToDto = (entity: any, dto: any) => {
     }
   }
 };
+//判断参数是否存在
 const existIn = (req, writeUrl) => {
   for (let s of writeUrl) {
     if (s == req) return true;

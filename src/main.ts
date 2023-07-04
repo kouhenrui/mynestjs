@@ -10,16 +10,17 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import conf from './config';
 import { JwthGuard } from './middleware/jwt.middleware';
 import { JwtService } from './model/jwt/jwtService';
+import knex, { Knex } from 'knex';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors();
-  app.use(logger);//日志中间件
-  app.useGlobalGuards(new JwthGuard(new JwtService))
+  app.use(logger); //日志中间件
+  app.useGlobalGuards(new JwthGuard(new JwtService())); //全局身份验证
   app.useWebSocketAdapter(new EventsAdapter(app)); //websocket通信
   app.useGlobalFilters(new AllExceptionsFilter()); //过滤拦截
   app.useGlobalInterceptors(new TransformInterceptor()); //格式化返回值
-  app.useGlobalPipes(new ValidationPipe()); //管道验证F
+  app.useGlobalPipes(new ValidationPipe()); //管道验证
 
   /*swagger接口文档  */
   const options = new DocumentBuilder()
@@ -31,6 +32,6 @@ async function bootstrap() {
   SwaggerModule.setup('/api/swag', app, document);
   await app.listen(conf.port);
 
-  console.log("server has started at:",conf.port)
+  console.log('server has started at:', conf.port);
 }
 bootstrap();
