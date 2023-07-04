@@ -21,7 +21,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.response.message
         : exception.response.errorMsg
       : '系统繁忙，请稍后再试！';
-    console.log('error_msg()',error_msg);
+    console.log('错误原因',error_msg);
     const error_code = exception.response?.errorCode
       ? exception.response.errorCode
       : '-1';
