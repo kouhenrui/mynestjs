@@ -21,7 +21,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.response.message
         : exception.response.errorMsg
       : '系统繁忙，请稍后再试！';
-    console.log('错误原因',error_msg);
+    console.log('错误原因', error_msg);
     const error_code = exception.response?.errorCode
       ? exception.response.errorCode
       : '-1';
@@ -43,8 +43,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     // 404 异常响应
     if (status === HttpStatus.NOT_FOUND) {
-      data.errorMsg = `资源不存在! 接口 ${request.method} -> ${request.url} 无效!`;
+      data.errorMsg = `${request.url}接口资源不存在!`;
     }
+    // 405 异常响应
+    if (status === HttpStatus.METHOD_NOT_ALLOWED) {
+      data.errorMsg = `接口 ${request.url} 存在! 但${request.method} 方法不被允许!`;
+    }
+    if(status==HttpStatus.INTERNAL_SERVER_ERROR)data.errorMsg ="系统内部错误,请稍后重试"
     Logger.error(data);
     let return_status = 200;
     if (status == 600) return_status = 200;

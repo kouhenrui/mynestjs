@@ -10,7 +10,6 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import conf from './config';
 import { JwthGuard } from './middleware/jwt.middleware';
 import { JwtService } from './model/jwt/jwtService';
-import knex, { Knex } from 'knex';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

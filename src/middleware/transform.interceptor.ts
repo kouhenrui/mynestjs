@@ -23,7 +23,7 @@ export class TransformInterceptor implements NestInterceptor {
         Logger.access(logFormat);
         return {
           data,
-          code: 2000,
+          code: 0,
           message: '请求成功',
         };
       }),

@@ -21,14 +21,15 @@ import { MongooseModule } from '@nestjs/mongoose';
       username: conf.mysql.username,
       password: conf.mysql.password,
       database: conf.mysql.database,
-      entities: [__dirname + '/**/**/**/entity/*.entity{.ts,.js}'],
+      entities: ['dist/entity/new/*.entity{.ts,.js}'],//实体指向位置
       multipleStatements: true,
       dropSchema: false,
+      autoLoadEntities:true,//自动加载实体结构
       synchronize: true, //同步数据
-      logging: true,
+      logging: true,//是否打印sql语句
       logger: new DbLogger(),
-      cache: false,
-      connectTimeout: 20000,
+      cache: false,//缓存
+      connectTimeout: 20000,//连接超时时间
     }),
     RedisModule.forRoot({ config: conf.redis }, true),
     MongooseModule.forRoot('mongodb://192.168.245.22/test',{connectionName:'log'}),
