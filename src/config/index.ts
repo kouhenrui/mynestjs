@@ -1,8 +1,12 @@
 const conf = {
-  writeUrl: ['/auth/login', '/api/swag'],
+  writeUrl: ['/api/auth/login', '/api/swag','/api/app/test','/api/auth/regist','/api/app/get/gaptcha'],
+  saltRounds:10,//密码盐加密轮数
   port: 3000,
   jwt: {
     secretKey: '651UHCNkNVeuwshfv78@##$%^',
+  },
+  redisExp:{
+    captchaExp:2*60
   },
 
   mysql : {

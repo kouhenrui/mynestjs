@@ -7,10 +7,18 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Logger } from '../config/log4js';
+import { CasbinService } from 'src/service/casbin.service';
 
 @Injectable()
 export class TransformInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  constructor(private casbinService: CasbinService) {}
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
+    const allPolicies = await this.casbinService.findAllPolicy();
+    console.log('获取所有角色及权限', allPolicies);
+
     const req = context.getArgByIndex(1).req;
     return next.handle().pipe(
       map((data) => {

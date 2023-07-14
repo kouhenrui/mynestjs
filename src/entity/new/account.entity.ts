@@ -13,7 +13,7 @@ export class Account extends Base {
     this.access_token = undefined;
   }
 
-  @Column({ comment: '名称' })
+  @Column({ comment: '名称', nullable: true })
   name: string;
   @Column({ comment: '加密盐', nullable: false })
   salt: string;
@@ -21,8 +21,11 @@ export class Account extends Base {
   password: string;
   @Column({ comment: '手机号码', nullable: false })
   phone: string;
-  @Column({ comment: '类型' })
+  @Column({ comment: '类型', nullable: true })
   type: string;
-  @Column({ comment: '状态参数' })
+  @Column({ comment: '状态参数', nullable: true })
   access_token: string;
+
+  @Column({comment:"角色编号", nullable: true})
+  role: number;
 }

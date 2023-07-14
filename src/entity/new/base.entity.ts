@@ -17,5 +17,5 @@ export class Base {
   updatedAt: Date;
 
   @DeleteDateColumn({comment:"删除时间"})
-  declaredDate: Date;
+  deletedAt: Date;
 }

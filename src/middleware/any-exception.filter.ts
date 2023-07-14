@@ -40,7 +40,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       errorCode: status == 600 ? error_info.errorInfo : error_code,
       error_info: error_info,
     };
-
+console.log(status,"异常状态妈妈")
     // 404 异常响应
     if (status === HttpStatus.NOT_FOUND) {
       data.errorMsg = `${request.url}接口资源不存在!`;
