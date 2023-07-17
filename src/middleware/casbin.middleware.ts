@@ -1,17 +1,22 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  NestMiddleware,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { CasbinService } from 'src/service/casbin.service';
 
 @Injectable()
-export class CasbinMidddleware implements CanActivate {
+export class CasbinMidddleware implements NestMiddleware {
   constructor(private casbinService: CasbinService) {}
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    console.log('实现全局中间件');
-    console.log('调用服务', this.casbinService.findAllPolicy());
-    return true;
-    //   throw new Error("Method not implemented.");
+
+  async use(req: any, res: any, next: (error?: any) => void) {
+    console.log('casbin中间件开始');
+    // console.log('调用服务', await this.casbinService.findAllPolicy());
+    // const url = req.originalUrl;
+    next()
+    console.log('casbin中间件结束');
   }
 
   // canActivate(context: ExecutionContext) {}

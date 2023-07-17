@@ -6,10 +6,17 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Logger } from '../config/log4js';
+import { InjectRepository } from '@nestjs/typeorm';
+import { OperateLog } from 'src/entity/new/operate_log.entity';
+import { Repository } from 'typeorm';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
+  constructor(
+    @InjectRepository(OperateLog)
+    private operateLogRepository: Repository<OperateLog>,
+  ) {}
+  async catch(exception: any, host: ArgumentsHost) {
     const request = host.switchToHttp().getRequest();
     const response = host.switchToHttp().getResponse();
     const status =
@@ -40,7 +47,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       errorCode: status == 600 ? error_info.errorInfo : error_code,
       error_info: error_info,
     };
-console.log(status,"异常状态妈妈")
+    console.log(status, '异常状态妈妈');
     // 404 异常响应
     if (status === HttpStatus.NOT_FOUND) {
       data.errorMsg = `${request.url}接口资源不存在!`;
@@ -49,15 +56,22 @@ console.log(status,"异常状态妈妈")
     if (status === HttpStatus.METHOD_NOT_ALLOWED) {
       data.errorMsg = `接口 ${request.url} 存在! 但${request.method} 方法不被允许!`;
     }
-    if(status==HttpStatus.INTERNAL_SERVER_ERROR)data.errorMsg ="系统内部错误,请稍后重试"
+    if (status == HttpStatus.INTERNAL_SERVER_ERROR)
+      data.errorMsg = '系统内部错误,请稍后重试';
     Logger.error(data);
-    let return_status = 200;
-    if (status == 600) return_status = 200;
-    if (status == 401 || status == 400) return_status = status;
-    if (status == 302) return_status = status;
 
-    // 程序内异常捕获返回
-    response.status(return_status).json({
+    const opreateLog = new OperateLog();
+    opreateLog.url = request.originalUrl;
+    opreateLog.method = request.method;
+    opreateLog.ip = request.ip;
+    opreateLog.status = String(status);
+    opreateLog.level = 'error';
+    this.operateLogRepository.save(opreateLog);
+    // let return_status = 200;
+    // if (status == 600) return_status = 200;
+    // if (status == 401 || status == 400) return_status = status;
+    // if (status == 302) return_status = status;
+    response.status(status).json({
       data: data.errorData,
       msg: data.errorMsg,
       code: data.errorCode,

@@ -35,13 +35,93 @@ export class CasbinService {
   }
 
   /**
+   * @description 验证权限是否存在
+   * @author khr
+   * @Date:
+   * @return:
+   */
+  async enforce(sub: string, obj: string, act: string): Promise<boolean> {
+    return this.enforcer.enforce(sub, obj, act);
+  }
+
+  /**
+   * @description 增加权限
+   * @author khr
+   * @Date:
+   * @return:
+   */
+  async addPolicy(sub: string, obj: string, act: string): Promise<void> {
+    await this.enforcer.addPolicy(sub, obj, act);
+    await this.enforcer.savePolicy();
+  }
+
+  /**
+   * @description 删除权限
+   * @author khr
+   * @Date:
+   * @return:
+   */
+  async removePolicy(sub: string, obj: string, act: string): Promise<void> {
+    await this.enforcer.removePolicy(sub, obj, act);
+    await this.enforcer.savePolicy();
+  }
+
+  /**
+   * @description 增加权限
+   * @author khr
+   * @Date:
+   * @return:
+   */
+  async addRole(role: string, permission: string): Promise<void> {
+    await this.enforcer.addPolicy(role, permission);
+    await this.enforcer.savePolicy();
+  }
+
+  /**
+   * @description 删除角色
+   * @author khr
+   * @Date:
+   * @return:
+   */
+  async removeRole(role: string, permission: string): Promise<void> {
+    await this.enforcer.removePolicy(role, permission);
+    await this.enforcer.savePolicy();
+  }
+
+  /**
+   * @description 修改角色
+   * @author khr
+   * @Date:
+   * @return:
+   */
+  async updateRole(oldRole: string, newRole: string): Promise<void> {
+    const rolePolicies = await this.enforcer.getFilteredPolicy(0, oldRole);
+    for (const policy of rolePolicies) {
+      await this.enforcer.removePolicy(...policy);
+      await this.enforcer.addPolicy(newRole, ...policy.slice(1));
+    }
+    await this.enforcer.savePolicy();
+  }
+
+  /**
    * @description GetRolesForUser 获取用户具有的角色
    * @author khr
    * @Date:
    * @return:
    */
-  async getRolesForUser(user) {
-    return await this.enforcer.getRolesForUser(user);
+  async getRolesForUser(policy: string) {
+    return await this.enforcer.getRolesForUser(policy);
+  }
+
+  /**
+   * @description GetUsersForRole 获取具有角色的用户
+   * @author khr
+   * @Date:
+   * @return:
+   */
+  async getUserForRole(user) {
+    await this.enforcer.loadPolicy()
+    return await this.enforcer.getUsersForRole(user);
   }
 
   /**
@@ -75,32 +155,5 @@ export class CasbinService {
 
   async addPolicies(policies) {
     return await this.enforcer.addPolicy(policies);
-  }
-
-  /**
-   * @description AddPolicy 向当前策略添加授权规则。 如果规则已经存在，函数返回false，并且不会添加规则。 否则，函数通过添加新规则并返回true。
-   * @author khr
-   * @Date:
-   */
-  async addPolicy(policy) {
-    return await this.enforcer.addPolicy(policy);
-  }
-
-  /**
-   * @description RemovePolicy 从当前策略中删除授权规则。
-   * @author khr
-   * @Date:
-   */
-  async removePolicy(policy) {
-    return await this.enforcer.removePolicy(policy);
-  }
-
-  /**
-   * @description 批量从当前策略中删除授权规则
-   * @author khr
-   * @return boolean
-   */
-  async removePolicies(policies) {
-    return await this.enforcer.removePolicies(policies);
   }
 }

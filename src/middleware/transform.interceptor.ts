@@ -11,14 +11,10 @@ import { CasbinService } from 'src/service/casbin.service';
 
 @Injectable()
 export class TransformInterceptor implements NestInterceptor {
-  constructor(private casbinService: CasbinService) {}
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
-    const allPolicies = await this.casbinService.findAllPolicy();
-    console.log('获取所有角色及权限', allPolicies);
-
     const req = context.getArgByIndex(1).req;
     return next.handle().pipe(
       map((data) => {
@@ -28,6 +24,7 @@ export class TransformInterceptor implements NestInterceptor {
           res_url: req.originalUrl,
           res_method: req.method,
         });
+        console.log("格式化返回")
         Logger.access(logFormat);
         return {
           data,

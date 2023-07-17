@@ -13,8 +13,7 @@ import { JwtService } from 'src/model/jwt/jwtService';
 
 @Injectable()
 export class JwthGuard extends AuthGuard('jwt') {
- 
-  constructor( private jwtService: JwtService) {
+  constructor(private jwtService: JwtService) {
     super();
   }
   canActivate(context: ExecutionContext) {
@@ -32,13 +31,20 @@ export class JwthGuard extends AuthGuard('jwt') {
       } else throw new UnauthorizedException('token不为空');
     }
   }
-  // use(req: Request, next: ()=>void) {
-  //   // console.log(req)
-  //   const url = req.baseUrl;
-  //   console.log('请求路径为', url);
-
-  //   console.log('卡在这了');
-
-  //   next();
-  // }
+}
+@Injectable()
+export class JwthMiddleware implements NestMiddleware {
+  constructor(private jwtService: JwtService) {}
+  async use(req: any, res: any, next: (error?: any) => void) {
+    const url = req.originalUrl;
+    if (!existIn(url, conf.writeUrl)) {
+      if (req.headers['authorization']) {
+        const token = req.headers.authorization?.split(' ')[1];
+        const payload = await this.jwtService.verify(token); // 验证 JWT Token，并获取解密后的 payload 数据
+        req['user'] = payload; // 将解密后的 payload 数据保存在请求对象中，供后续处理使用
+        next();
+      } else throw new UnauthorizedException('token不为空');
+    }
+    next();
+  }
 }
