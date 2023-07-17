@@ -25,7 +25,7 @@
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
+nestjs web框架模板，包含了jwt签发，验证，mysql迁移表，rbac权限管理，redis缓存，常规操作日志记录，密钥轮询加密信息，统一返回格式，图形验证码，自定义错误抛出捕捉
 ## Installation
 
 ```bash
