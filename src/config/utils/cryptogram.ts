@@ -57,3 +57,4 @@ export async function sign(): Promise<any> {
   // let decrypted = decipher.update(encrypted);
   // decrypted = Buffer.concat([decrypted, decipher.final()]);
 }
+
