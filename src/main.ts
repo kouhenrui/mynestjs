@@ -5,7 +5,8 @@ import {  logger } from './middleware/logger.middleware';
 import { EventsAdapter } from './events/events.adapter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import conf from './config';
-
+import * as cookieParser from 'cookie-parser';
+import * as csurf from 'csurf';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
@@ -19,7 +20,17 @@ async function bootstrap() {
   // app.useGlobalFilters(new AllExceptionsFilter()); //过滤拦截
   // app.useGlobalInterceptors(new TransformInterceptor(new CasbinService())); //格式化返回值,拦截是否有请求权限
   // app.useGlobalPipes(new ValidationPipe()); //管道验证
+  // 使用 cookie-parser 中间件
+  app.use(cookieParser());
 
+  // 设置 CSRF 中间件
+  app.use(
+    csurf({
+      cookie: {
+        httpOnly: true, // 令牌在 cookie 中，且不能通过 JavaScript 访问
+      },
+    }),
+  );
   /*swagger接口文档  */
   const options = new DocumentBuilder()
     .setTitle('SWAGGER DOCUMENT')

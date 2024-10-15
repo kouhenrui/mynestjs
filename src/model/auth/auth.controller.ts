@@ -10,11 +10,16 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthLoginDto, AuthRegistDto, CreateAuthDto } from './dto/auth.dto';
-import { JwtService } from '../jwt/jwtService';
 
 @Controller('auth')
 export class AuthController {
-  constructor( private readonly authService: AuthService){}
+  constructor(private readonly authService: AuthService) { }
+
+  @Get('/csrf')
+  getCsrfToken(@Req() request: any) {
+    // 返回 CSRF 令牌
+    return { csrfToken: request.csrfToken() };
+  }
   @Post('/regist')
   async regist(@Body() authRegist: AuthRegistDto) {
     return await this.authService.register(authRegist);
@@ -37,7 +42,7 @@ export class AuthController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string) {}
+  update(@Param('id') id: string) { }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
